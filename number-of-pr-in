@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+#
+# number-of-pr-in
+# Author : Clyhtsuriva
+
+usage () {
+	echo "Usage: number-of-pr-in <repository>"
+	exit 1
+}
+
+number-of-pr-in () {
+
+	[ $# -eq 1 ] || usage
+
+	GH_REPO=void-linux/$1
+	LIMIT=1000 # Search API => 1000 results max
+
+	gh repo view "$GH_REPO" 1> /dev/null || exit 1
+
+	GH_PR_LIST=$(gh pr list \
+		--repo "$GH_REPO" \
+		--author "@me" \
+		--state merged \
+		--limit $LIMIT)
+
+	PARSED=$(echo "$GH_PR_LIST" | \
+		awk '{ print $2 }' | \
+		sed 's/://g' | \
+		sort | \
+		uniq -c | \
+		sort -nr | \
+		sed 's/      //g')
+
+
+	COLOR_ON=$(tput setaf 3; tput bold)
+	COLOR_OFF=$(tput sgr0)
+
+	# shellcheck disable=SC2001
+	echo "$PARSED" | sed "s/[^[:blank:]]\{1,\}/$COLOR_ON&$COLOR_OFF/1"
+}
+
+number-of-pr-in "$@"
