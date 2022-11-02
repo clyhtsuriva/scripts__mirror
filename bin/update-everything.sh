@@ -40,11 +40,6 @@ remote_update(){
 
 	echo_n_notify "remote update"
 
-#	ssh -p8022 debian@adjutor.xyz '\
-#		sudo apt-fast update && \
-#		sudo apt-fast upgrade && \
-#		sudo apt-fast autoremove'
-
 	ansible-playbook --inventory-file "$HOME/workbench/ansible/hosts" \
 		"$HOME/workbench/ansible/update_adjutor.yml"
 
@@ -80,13 +75,7 @@ pip_update(){
 }
 
 
-#  ___  ___  ___  _____  _   _
-#  |  \/  | / _ \|_   _|| \ | |
-#  | .  . |/ /_\ \ | |  |  \| |
-#  | |\/| ||  _  | | |  | . ` |
-#  | |  | || | | |_| |_ | |\  |
-#  \_|  |_/\_| |_/\___/ \_| \_/
-#
+# MAIN
 
 local_update
 remote_update
