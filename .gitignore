@@ -1,2 +1,4 @@
 auto-void-packages/needs_update.txt
 ansible/hosts
+bin/Bisq
+bin/wassabee
