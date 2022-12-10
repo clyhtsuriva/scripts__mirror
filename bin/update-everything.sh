@@ -10,19 +10,18 @@
 # remote_update
 # non_free_update
 # pip_update
+# update_scripts_repo
 
-
-xi='sudo xbps-install'
-xr='sudo xbps-remove'
 
 # Print to stdout
 # And as a notification
 echo_n_notify(){
+
 	printf "%s\n" "[$1]"
 	notify-send "[$1]"
+
 }
 
-echo_n_notify "Updating everything ..."
 
 # Update local xbps packages
 # And clean the cache and remove orphans
@@ -35,6 +34,7 @@ local_update(){
 
 }
 
+
 # Update remote debian server using Ansible
 remote_update(){
 
@@ -44,6 +44,7 @@ remote_update(){
 		"$HOME/workbench/ansible/update_adjutor.yml"
 
 }
+
 
 # Update non-free xbps packages
 non_free_update(){
@@ -63,6 +64,7 @@ non_free_update(){
 
 }
 
+
 # Update pip packages needing one
 pip_update(){
 
@@ -75,9 +77,28 @@ pip_update(){
 }
 
 
+# Execute update-script-repo.sh
+# to add, commit and push
+# updates of my custom scripts
+# and ansible playbooks
+update_scripts_repo(){
+	echo_n_notify "custom scripts repo update"
+
+	update-scripts-repo.sh
+
+}
+
+
+
 # MAIN
+
+xi='sudo xbps-install'
+xr='sudo xbps-remove'
+
+echo_n_notify "Updating everything ..."
 
 local_update
 remote_update
 non_free_update
 pip_update
+update_scripts_repo
