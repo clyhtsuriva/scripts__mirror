@@ -51,5 +51,5 @@ do
 done <"$CONTRIBUTED_TO_FILE"
 popd || exit 1
 
-# print the file containing the packages needding an update
+# print the file containing the packages needing an update
 [ -f "$NEEDS_UPDATE" ] && bat "$NEEDS_UPDATE"
