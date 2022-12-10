@@ -5,7 +5,8 @@
 
 # FUNCTIONS
 #
-# echo_n_notify
+# printf_n_notify
+# printf_accross_width
 # local_update
 # remote_update
 # non_free_update
@@ -15,10 +16,20 @@
 
 # Print to stdout
 # And as a notification
-echo_n_notify(){
+printf_n_notify(){
 
 	printf "%s\n" "[$1]"
 	notify-send "[$1]"
+
+}
+
+
+# Print a line across the entire width of the terminal
+printf_accross_width(){
+
+	printf "\n"
+	printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' "$1"
+	printf "\n"
 
 }
 
@@ -27,7 +38,7 @@ echo_n_notify(){
 # And clean the cache and remove orphans
 local_update(){
 
-	echo_n_notify "local update"
+	printf_n_notify "local update"
 
 	$xi --sync --update --verbose && \
 	$xr --clean-cache --remove-orphans --verbose
@@ -38,7 +49,7 @@ local_update(){
 # Update remote debian server using Ansible
 remote_update(){
 
-	echo_n_notify "remote update"
+	printf_n_notify "remote update"
 
 	ansible-playbook --inventory-file "$HOME/workbench/ansible/hosts" \
 		"$HOME/workbench/ansible/update_adjutor.yml"
@@ -49,7 +60,7 @@ remote_update(){
 # Update non-free xbps packages
 non_free_update(){
 
-	echo_n_notify "non-free update"
+	printf_n_notify "non-free update"
 
 	pushd ~/workbench/auto-void-packages || exit 1
 	./update-git-repo.sh
@@ -68,7 +79,7 @@ non_free_update(){
 # Update pip packages needing one
 pip_update(){
 
-	echo_n_notify "pip update"
+	printf_n_notify "pip update"
 
 	python3 -m pip list --outdated --format=json | \
 	jq -r '.[] | "\(.name)==\(.latest_version)"' | \
@@ -82,7 +93,7 @@ pip_update(){
 # updates of my custom scripts
 # and ansible playbooks
 update_scripts_repo(){
-	echo_n_notify "custom scripts repo update"
+	printf_n_notify "custom scripts repo update"
 
 	update-scripts-repo.sh
 
@@ -95,10 +106,16 @@ update_scripts_repo(){
 xi='sudo xbps-install'
 xr='sudo xbps-remove'
 
-echo_n_notify "Updating everything ..."
+printf_n_notify ">>> Global Update >>>"
 
 local_update
+printf_accross_width "%"
 remote_update
+printf_accross_width "%"
 non_free_update
+printf_accross_width "%"
 pip_update
+printf_accross_width "%"
 update_scripts_repo
+
+printf_n_notify "<<< Global Update <<<"
