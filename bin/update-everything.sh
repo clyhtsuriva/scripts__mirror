@@ -65,8 +65,6 @@ non_free_update(){
 	pushd ~/workbench/auto-void-packages || exit 1
 	./update-git-repo.sh
 	cd ../void-packages || exit 1
-	./xbps-src pkg teams-bin && \
-	$xi --repository=hostdir/binpkgs/nonfree teams-bin
 	./xbps-src pkg discord && \
 	$xi --repository=hostdir/binpkgs/nonfree discord
 	./xbps-src pkg spotify && \
