@@ -9,6 +9,7 @@ cp -rv "$HOME/.local/usr/local/bin" .
 cp -rv "$HOME/workbench/auto-void-packages" .
 cp -rv "$HOME/workbench/ansible" .
 
+git status | less && git diff | less
 git add . && git commit && git push -v --progress
 
 popd || exit 1
