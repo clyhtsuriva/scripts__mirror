@@ -97,6 +97,10 @@ update_scripts_repo(){
 
 }
 
+update_whatis_db(){
+	printf_n_notify "update whatis db"
+	makewhatis /usr/share/man
+}
 
 
 # MAIN
@@ -115,5 +119,7 @@ printf_accross_width "%"
 #pip_update # 2023/01/09 : currently not a stable solution to update pip packages
 printf_accross_width "%"
 update_scripts_repo
+printf_accross_width "%"
+update_whatis_db
 
 printf_n_notify "<<< Global Update <<<"
