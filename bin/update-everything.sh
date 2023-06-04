@@ -99,7 +99,7 @@ update_scripts_repo(){
 
 update_whatis_db(){
 	printf_n_notify "update whatis db"
-	makewhatis /usr/share/man
+	sudo makewhatis /usr/share/man
 }
 
 
