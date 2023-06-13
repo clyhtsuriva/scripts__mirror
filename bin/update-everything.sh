@@ -12,6 +12,7 @@
 # non_free_update
 # pip_update
 # update_scripts_repo
+# update_whatis_db
 
 
 # Print to stdout
