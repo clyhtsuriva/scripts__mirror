@@ -1,4 +1,2 @@
 auto-void-packages/*.txt
 ansible/hosts
-bin/Bisq
-bin/wassabee
