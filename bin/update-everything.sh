@@ -41,6 +41,7 @@ local_update(){
 
 	printf_n_notify "local update"
 
+	$xi -u xbps && \
 	$xi --sync --update --verbose && \
 	$xr --clean-cache --remove-orphans --verbose
 
