@@ -29,7 +29,7 @@ NEEDS_UPDATE="needs_update.txt"
 
 CONTRIBUTED_TO_FILE="contributed-to.txt"
 
-VOID_UPDATES_URL="https://a-hel-fi.m.voidlinux.org/void-updates/void-updates.txt"
+VOID_UPDATES_URL="https://repo-fi.voidlinux.org/void-updates/void-updates.txt"
 VOID_UPDATES=$(curl --silent "$VOID_UPDATES_URL")
 
 # for each package that needs an update put it in the file
