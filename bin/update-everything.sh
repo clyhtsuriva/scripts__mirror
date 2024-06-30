@@ -81,9 +81,9 @@ pip_update(){
 
 	printf_n_notify "pip update"
 
-	python3 -m pip list --outdated --format=json | \
+	"$HOME/workbench/pyvenv/bin/pip3" list --outdated --format=json | \
 	jq -r '.[] | "\(.name)==\(.latest_version)"' | \
-	xargs -n1 pip3 install -U
+	xargs -n1 "$HOME/workbench/pyvenv/bin/pip3" install --upgrade
 
 }
 
@@ -118,7 +118,7 @@ remote_update
 printf_accross_width "%"
 non_free_update
 printf_accross_width "%"
-#pip_update # 2023/01/09 : currently not a stable solution to update pip packages
+pip_update
 printf_accross_width "%"
 update_scripts_repo
 printf_accross_width "%"
