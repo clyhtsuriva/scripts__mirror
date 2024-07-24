@@ -69,8 +69,6 @@ non_free_update(){
 	cd ../void-packages || exit 1
 	./xbps-src pkg discord && \
 	$xi --repository=hostdir/binpkgs/nonfree discord
-	./xbps-src pkg spotify && \
-	$xi --repository=hostdir/binpkgs/nonfree spotify
 	popd || exit 1
 
 }
