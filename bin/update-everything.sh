@@ -67,8 +67,8 @@ non_free_update(){
 	pushd ~/workbench/auto-void-packages || exit 1
 	./update-git-repo.sh
 	cd ../void-packages || exit 1
-	./xbps-src pkg discord && \
-	$xi --repository=hostdir/binpkgs/nonfree discord
+	./xbps-src pkg discord && $xi --repository=hostdir/binpkgs/nonfree discord
+	./xbps-src pkg vagrant && $xi --repository=hostdir/binpkgs/nonfree vagrant
 	popd || exit 1
 
 }
