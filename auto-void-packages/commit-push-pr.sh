@@ -3,10 +3,11 @@
 
 
 helpy(){
-printf "command: %s <package> <version> <tested>\n" "$0"
+printf "command: %s <package> <version> <tested> [path]\n" "$0"
 printf "package: package name\n"
 printf "version: version update\n"
 printf "tested: yes/briefly/no\n"
+printf "path (optional): path of architectures file, defaults to '\$HOME/workbench/auto-void-packages/architectures.txt'\n"
 }
 
 
@@ -14,6 +15,7 @@ printf "tested: yes/briefly/no\n"
 PKG="$1"
 VER="$2"
 TESTED="$3"
+archs_fp="${4:-$HOME/workbench/auto-void-packages/architectures.txt}"
 printf "Updating %s to %s.\n" "$PKG" "$VER"
 
 pushd ~/workbench/void-packages || exit 1
@@ -22,7 +24,7 @@ git add "srcpkgs/$PKG" && \
 	git commit -m "$PKG: update to $VER" && \
 	git push origin "$PKG-update"
 
-ARCHS=$(/bin/cat "$HOME/workbench/auto-void-packages/architectures.txt")
+ARCHS=$(/bin/cat "$archs_fp")
 
 gh pr create \
 	--title "$PKG: update to $VER" \

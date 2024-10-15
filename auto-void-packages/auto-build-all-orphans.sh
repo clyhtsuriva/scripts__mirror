@@ -42,6 +42,10 @@ typeset package=""
 
 typeset -A pkgs_to_update=()
 
+typeset -i nb_of_pkgs_to_build=0
+typeset auto_build_archs_path=""
+typeset -i pkg_counter=0
+
 ###
 
 ### COLOURS ###
@@ -67,6 +71,11 @@ MAGENTA=$(tput setaf 5)
 ####
 
 ### FUNCTIONS
+
+function helpy {
+	printf "command: %s [number_of_packages]\n" "$0"
+printf "number_of_packages: Must be an integer, indicates of many packages you want to auto build, defaults to none.\n"
+}
 
 function yes_or_no {
     while true; do
@@ -100,6 +109,11 @@ void_updates_content=$(curl --silent "$void_updates_url")
 orphan_packages=$(echo "$void_updates_content" | sed -n '/orphan@voidlinux.org/,/@/p' | grep -v '^--' | grep -v '@')
 orphan_packages_sorted=$(echo "$orphan_packages" | awk '{ print $1 }' | sort -u)
 
+nb_of_pkgs_to_build="${1:-0}"
+
+echo "Executing update-git-repo.sh"
+./update-git-repo.sh || exit 1
+
 start_spinner "Calculating how many orphan packages there are..."
 for package in $orphan_packages_sorted;
 do
@@ -110,5 +124,16 @@ do
 done
 stop_spinner
 
-echo "Number of orphan packages needing an update : ${#pkgs_to_update[@]}"
-yes_or_no "This can take a very long time, would you like to proceed ?" && echo "he said yes"
+echo -n "Number of orphan packages needing an update : " ; printf_green "${#pkgs_to_update[@]}"
+echo -n "Number of orphan packages you want to build : " ; printf_red "$nb_of_pkgs_to_build"
+[ $nb_of_pkgs_to_build == 0 ] && exit 1
+
+#while [ $pkg_counter -lt $nb_of_pkgs_to_build ]; do
+	for package in "${!pkgs_to_update[@]}"; do
+		latest_version="${pkgs_to_update[$package]}"
+		echo "[$package - $latest_version]"
+	#	auto_build_archs_path="$HOME/workbench/auto-void-packages/auto-build/archs-${package}-${latest_version}.txt"
+	#	./update-package.sh "$package" "$latest_version" "$auto_build_archs_path"
+	done
+#	((pkg_counter++))
+#done
