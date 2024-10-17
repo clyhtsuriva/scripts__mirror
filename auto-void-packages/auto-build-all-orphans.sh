@@ -31,7 +31,6 @@ typeset GREEN=""
 typeset BOLD=""
 typeset MAGENTA=""
 
-typeset yn
 typeset -i spinner_pid
 
 typeset void_updates_url=""
@@ -43,6 +42,7 @@ typeset package=""
 typeset -A pkgs_to_update=()
 
 typeset -i nb_of_pkgs_to_build=0
+typeset pkgs_to_exclude=""
 typeset auto_build_archs_path=""
 typeset -i pkg_counter=0
 
@@ -68,23 +68,12 @@ MAGENTA=$(tput setaf 5)
 	printf "%s[%s]%s" "$MAGENTA" "$1" "$NORMAL"
 }
 
-####
-
 ### FUNCTIONS
 
 function helpy {
-	printf "command: %s [number_of_packages]\n" "$0"
+	printf "command: %s [number_of_packages] [pkgs_to_exclude]\n" "$0"
 printf "number_of_packages: Must be an integer, indicates of many packages you want to auto build, defaults to none.\n"
-}
-
-function yes_or_no {
-    while true; do
-        read -rp "$* [y/n]: " yn
-        case $yn in
-            [Yy]*) return 0  ;;
-            [Nn]*) echo "Aborted" ; return  1 ;;
-        esac
-    done
+printf "pkgs_to_exclude: Must be one or a list of packages name separated by commas, e.g., ansible,xonsh,ampache"
 }
 
 function start_spinner {
@@ -100,8 +89,6 @@ function stop_spinner {
     echo -en "\033[2K\r"
 }
 
-###
-
 ### MAIN ###
 
 void_updates_url="https://repo-fi.voidlinux.org/void-updates/void-updates.txt"
@@ -110,9 +97,7 @@ orphan_packages=$(echo "$void_updates_content" | sed -n '/orphan@voidlinux.org/,
 orphan_packages_sorted=$(echo "$orphan_packages" | awk '{ print $1 }' | sort -u)
 
 nb_of_pkgs_to_build="${1:-0}"
-
-echo "Executing update-git-repo.sh"
-./update-git-repo.sh || exit 1
+pkgs_to_exclude=${2:-}
 
 start_spinner "Calculating how many orphan packages there are..."
 for package in $orphan_packages_sorted;
@@ -126,14 +111,35 @@ stop_spinner
 
 echo -n "Number of orphan packages needing an update : " ; printf_green "${#pkgs_to_update[@]}"
 echo -n "Number of orphan packages you want to build : " ; printf_red "$nb_of_pkgs_to_build"
+echo -n "Packages you want to exclude : " ; printf_red "$pkgs_to_exclude"
+
 [ $nb_of_pkgs_to_build == 0 ] && exit 1
 
-#while [ $pkg_counter -lt $nb_of_pkgs_to_build ]; do
-	for package in "${!pkgs_to_update[@]}"; do
-		latest_version="${pkgs_to_update[$package]}"
-		echo "[$package - $latest_version]"
-	#	auto_build_archs_path="$HOME/workbench/auto-void-packages/auto-build/archs-${package}-${latest_version}.txt"
-	#	./update-package.sh "$package" "$latest_version" "$auto_build_archs_path"
-	done
-#	((pkg_counter++))
-#done
+echo "Executing update-git-repo.sh"
+./update-git-repo.sh || exit 1
+
+for package in "${!pkgs_to_update[@]}"; do
+
+	echo "DEBUG : package : $package"
+
+	# If the currently selected package is in the exclude list, continue to the next package
+	if echo "$pkgs_to_exclude" | grep -q "$package"; then #TODO
+		echo "DEBUG : before continue"
+		continue
+		echo "DEBUG : after continue"
+	fi
+	echo "DEBUG : after if exclude"
+
+	# If we've hit the max number of packages asked by the user, break the loop
+	if [ $pkg_counter -ge $nb_of_pkgs_to_build ]; then
+		break
+	fi
+
+	latest_version="${pkgs_to_update[$package]}"
+	auto_build_archs_path="$HOME/workbench/auto-void-packages/auto-build/archs-${package}-${latest_version}.txt"
+	echo "[$package - $latest_version]"
+
+	./update-package.sh "$package" "$latest_version" "$auto_build_archs_path"
+
+	((pkg_counter++))
+done

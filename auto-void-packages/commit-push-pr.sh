@@ -10,26 +10,35 @@ printf "tested: yes/briefly/no\n"
 printf "path (optional): path of architectures file, defaults to '\$HOME/workbench/auto-void-packages/architectures.txt'\n"
 }
 
+###
 
 [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] && helpy && exit 1
 PKG="$1"
 VER="$2"
-TESTED="$3"
+tested="$3"
 archs_fp="${4:-$HOME/workbench/auto-void-packages/architectures.txt}"
+
+# The third variable must be yes, briefly or no
+[[ ! $tested =~ (yes|briefly|no) ]] && helpy && exit 1
+
+###
+
 printf "Updating %s to %s.\n" "$PKG" "$VER"
 
 pushd ~/workbench/void-packages || exit 1
 
+# git stuff
 git add "srcpkgs/$PKG" && \
 	git commit -m "$PKG: update to $VER" && \
 	git push origin "$PKG-update"
 
 ARCHS=$(/bin/cat "$archs_fp")
 
+# github stuff
 gh pr create \
 	--title "$PKG: update to $VER" \
 	--body "#### Testing the changes
-- I tested the changes in this PR: **$TESTED**
+- I tested the changes in this PR: **$tested**
 
 #### Local build testing
 - I built this PR locally for my native architecture, x86_64
