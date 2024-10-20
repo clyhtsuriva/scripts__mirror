@@ -120,15 +120,10 @@ echo "Executing update-git-repo.sh"
 
 for package in "${!pkgs_to_update[@]}"; do
 
-	echo "DEBUG : package : $package"
-
 	# If the currently selected package is in the exclude list, continue to the next package
-	if echo "$pkgs_to_exclude" | grep -q "$package"; then #TODO
-		echo "DEBUG : before continue"
+	if echo "$package" | grep -q -E "^($(echo "$pkgs_to_exclude" | tr ',' '|'))"; then #TODO
 		continue
-		echo "DEBUG : after continue"
 	fi
-	echo "DEBUG : after if exclude"
 
 	# If we've hit the max number of packages asked by the user, break the loop
 	if [ $pkg_counter -ge $nb_of_pkgs_to_build ]; then
@@ -137,9 +132,11 @@ for package in "${!pkgs_to_update[@]}"; do
 
 	latest_version="${pkgs_to_update[$package]}"
 	auto_build_archs_path="$HOME/workbench/auto-void-packages/auto-build/archs-${package}-${latest_version}.txt"
-	echo "[$package - $latest_version]"
 
+	echo ">>>[$package - $latest_version]>>>"
 	./update-package.sh "$package" "$latest_version" "$auto_build_archs_path"
+	echo "<<<[$package - $latest_version]<<<"
+
 
 	((pkg_counter++))
 done
