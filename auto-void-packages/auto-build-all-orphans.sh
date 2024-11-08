@@ -42,6 +42,7 @@ typeset package=""
 typeset -A pkgs_to_update=()
 
 typeset -i nb_of_pkgs_to_build=0
+typeset pkgs_to_update_fp="/tmp/pkgs_to_update.txt"
 typeset pkgs_to_exclude=""
 typeset auto_build_archs_path=""
 typeset -i pkg_counter=0
@@ -109,9 +110,14 @@ do
 done
 stop_spinner
 
+# Infos
 echo -n "Number of orphan packages needing an update : " ; printf_green "${#pkgs_to_update[@]}"
 echo -n "Number of orphan packages you want to build : " ; printf_red "$nb_of_pkgs_to_build"
 echo -n "Packages you want to exclude : " ; printf_red "$pkgs_to_exclude"
+
+# Saving the content of the pkgs_to_update to a file
+[ -f $pkgs_to_update_fp ] && rm $pkgs_to_update_fp
+echo "${!pkgs_to_update[@]}" > $pkgs_to_update_fp
 
 [ $nb_of_pkgs_to_build == 0 ] && exit 1
 
@@ -121,7 +127,7 @@ echo "Executing update-git-repo.sh"
 for package in "${!pkgs_to_update[@]}"; do
 
 	# If the currently selected package is in the exclude list, continue to the next package
-	if echo "$package" | grep -q -E "^($(echo "$pkgs_to_exclude" | tr ',' '|'))"; then #TODO
+	if echo "$package" | grep -q -E "^($(echo "$pkgs_to_exclude" | tr ',' '|'))"; then
 		continue
 	fi
 
