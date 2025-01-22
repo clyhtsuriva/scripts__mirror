@@ -5,19 +5,15 @@ echo_n_notify(){
 }
 
 pushd "$HOME/workbench/void-packages" || exit 1
-CHECKOUT="checkout"
-FETCH="fetch"
-MERGE="merge"
-PUSH="push"
 
 git checkout master && \
-	echo_n_notify "$CHECKOUT: ok" && \
+	echo_n_notify "checkout: ok" && \
 	git fetch upstream && \
-	echo_n_notify "$FETCH: ok" && \
+	echo_n_notify "fetch: ok" && \
 	git merge upstream/master && \
-	echo_n_notify "$MERGE: ok" && \
+	echo_n_notify "merge: ok" && \
 	git push && \
-	echo_n_notify "$PUSH: ok"
+	echo_n_notify "push: ok"
 
 ./xbps-src bootstrap-update
 
