@@ -14,9 +14,12 @@ printf "path (optional): path of architectures file, defaults to '\$HOME/workben
 PKG="$1"
 VER="$2"
 archs_fp="${3:-$HOME/workbench/auto-void-packages/architectures.txt}"
+template_path="srcpkgs/$PKG/template"
 printf "Updating %s to %s.\n" "$PKG" "$VER"
 
 pushd ~/workbench/void-packages || exit 1
+
+./xbps-src binary-bootstrap && ./xbps-src clean-repocache
 
 git checkout master
 git checkout -b "$PKG-update" || ( \
@@ -25,10 +28,12 @@ git checkout -b "$PKG-update" || ( \
 	git checkout -b "$PKG-update" ) || \
 	exit 1
 
-sed -i "s/version=.*/version=$VER/g" "srcpkgs/$PKG/template"
-sed -i "s/revision=.*/revision=1/g" "srcpkgs/$PKG/template"
+sed -i "s/version=.*/version=$VER/g" "$template_path"
+sed -i "s/revision=.*/revision=1/g" "$template_path"
 
 xgensum -f -i "$PKG" ; xgensum -f -i "$PKG" || exit 1
+
+xlint "$template_path" || exit 1
 
 [ -f "$archs_fp" ] && rm -v "$archs_fp"
 ./xbps-src -a armv7l pkg "$PKG" && echo "  - armv7l" >> "$archs_fp"
@@ -36,6 +41,8 @@ xgensum -f -i "$PKG" ; xgensum -f -i "$PKG" || exit 1
 ./xbps-src -a aarch64-musl pkg "$PKG" && echo "  - aarch64-musl" >> "$archs_fp"
 ./xbps-src pkg "$PKG" || exit 1
 
-xi -S --repository="hostdir/binpkgs/$PKG-update" "$PKG" && $PKG --version
+./xbps-src check "$PKG" || exit 1
+
+sudo xbps-install -S --repository="hostdir/binpkgs/$PKG-update" "$PKG" && $PKG --version
 
 popd || exit 1
