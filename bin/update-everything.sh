@@ -53,8 +53,9 @@ remote_update(){
 
 	printf_n_notify "remote update"
 
-	ansible-playbook --inventory-file "$HOME/workbench/ansible/hosts" \
-		"$HOME/workbench/ansible/update_adjutor.yml"
+	ansible-playbook -b \
+		--inventory-file "$HOME/workbench/homelab-iac/ansible/inventory.yaml" \
+		"$HOME/workbench/homelab-iac/ansible/playbooks/apt_update.yml"
 
 }
 
@@ -67,7 +68,6 @@ non_free_update(){
 	pushd ~/workbench/auto-void-packages || exit 1
 	./update-git-repo.sh
 	cd ../void-packages || exit 1
-	./xbps-src pkg discord && $xi --repository=hostdir/binpkgs/nonfree discord
 	./xbps-src pkg vagrant && $xi --repository=hostdir/binpkgs/nonfree vagrant
 	popd || exit 1
 
@@ -78,6 +78,8 @@ non_free_update(){
 pip_update(){
 
 	printf_n_notify "pip update"
+
+	"$HOME/workbench/pyvenv/bin/pip3" install --upgrade pip
 
 	"$HOME/workbench/pyvenv/bin/pip3" list --outdated --format=json | \
 	jq -r '.[] | "\(.name)==\(.latest_version)"' | \
