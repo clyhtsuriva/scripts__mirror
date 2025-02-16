@@ -9,7 +9,6 @@
 # printf_accross_width
 # local_update
 # remote_update
-# non_free_update
 # pip_update
 # update_scripts_repo
 # update_whatis_db
@@ -53,23 +52,10 @@ remote_update(){
 
 	printf_n_notify "remote update"
 
+	export ANSIBLE_CONFIG="$HOME/workbench/homelab-iac/ansible/ansible.cfg"
 	ansible-playbook -b \
 		--inventory-file "$HOME/workbench/homelab-iac/ansible/inventory.yaml" \
-		"$HOME/workbench/homelab-iac/ansible/playbooks/apt_update.yml"
-
-}
-
-
-# Update non-free xbps packages
-non_free_update(){
-
-	printf_n_notify "non-free update"
-
-	pushd ~/workbench/auto-void-packages || exit 1
-	./update-git-repo.sh
-	cd ../void-packages || exit 1
-	./xbps-src pkg vagrant && $xi --repository=hostdir/binpkgs/nonfree vagrant
-	popd || exit 1
+		"$HOME/workbench/homelab-iac/ansible/playbooks/update_system.yml"
 
 }
 
@@ -115,8 +101,6 @@ printf_n_notify ">>> Global Update >>>"
 local_update
 printf_accross_width "%"
 remote_update
-printf_accross_width "%"
-non_free_update
 printf_accross_width "%"
 pip_update
 printf_accross_width "%"
