@@ -53,7 +53,7 @@ remote_update(){
 	printf_n_notify "remote update"
 
 	export ANSIBLE_CONFIG="$HOME/workbench/homelab-iac/ansible/ansible.cfg"
-	ansible-playbook -b \
+	ansible-playbook -v -b \
 		--inventory-file "$HOME/workbench/homelab-iac/ansible/inventory.yaml" \
 		"$HOME/workbench/homelab-iac/ansible/playbooks/update_system.yml"
 
