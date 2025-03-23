@@ -36,6 +36,8 @@ xgensum -f -i "$PKG" ; xgensum -f -i "$PKG" || exit 1
 xlint "$template_path" || exit 1
 
 [ -f "$archs_fp" ] && rm -v "$archs_fp"
+
+./xbps-src clean "$PKG"
 ./xbps-src -a armv7l pkg "$PKG" && echo "  - armv7l" >> "$archs_fp"
 ./xbps-src -a armv6l-musl pkg "$PKG" && echo "  - armv6l-musl" >> "$archs_fp"
 ./xbps-src -a aarch64-musl pkg "$PKG" && echo "  - aarch64-musl" >> "$archs_fp"
