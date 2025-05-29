@@ -38,6 +38,10 @@ VOID_UPDATES=$(curl --silent "$VOID_UPDATES_URL")
 # v for needing one
 while read -r PKG;
 do
+	# checks if there's a # at the beginning of the line
+	# if so, skip the current iteration
+	echo "$PKG" | grep -q '^#' && continue
+
 	printf_magenta "$PKG"
 	UPDATES=$(echo "$VOID_UPDATES" | grep -e "^$PKG ")
 	if [ -z "$UPDATES" ];
