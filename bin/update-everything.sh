@@ -54,7 +54,7 @@ remote_update(){
 
 	export ANSIBLE_CONFIG="$HOME/workbench/homelab-iac/ansible/ansible.cfg"
 	ansible-playbook -v -b \
-		--inventory-file "$HOME/workbench/homelab-iac/ansible/inventory.yaml" \
+		--inventory "$HOME/workbench/homelab-iac/ansible/inventory.yaml" \
 		"$HOME/workbench/homelab-iac/ansible/playbooks/update_system.yml"
 
 }
