@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# clyhtsuriva
+
+VER=$1
+
+pushd /tmp/ || exit
+
+curl -LO "https://releases.hashicorp.com/packer/${VER}/packer_${VER}_linux_amd64.zip" && \
+unzip "packer_${VER}_linux_amd64.zip" && \
+rm LICENSE.txt && \
+mv packer ~/.local/bin/packer && \
+packer -v && \
+rm "packer_${VER}_linux_amd64.zip"
+
+popd || exit

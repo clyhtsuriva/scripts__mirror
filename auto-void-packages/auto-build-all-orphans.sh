@@ -140,7 +140,7 @@ for package in "${!pkgs_to_update[@]}"; do
 	auto_build_archs_path="$HOME/workbench/auto-void-packages/auto-build/archs-${package}-${latest_version}.txt"
 
 	echo ">>>[$package - $latest_version]>>>"
-	./update-package.sh "$package" "$latest_version" "$auto_build_archs_path"
+	./build-package.sh "$package" "$latest_version" "$auto_build_archs_path"
 	echo "<<<[$package - $latest_version]<<<"
 
 
